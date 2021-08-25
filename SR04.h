@@ -1,7 +1,9 @@
 #ifndef SR04_H
 #define SR04_H
 
-#if defined(ARDUINO) && ARDUINO >= 100
+#if defined(ENERGIA) // LaunchPad MSP430/432, Stellaris and Tiva, Experimeter Board FR5739 specific
+    #include "Energia.h"
+#elif defined(ARDUINO) && (ARDUINO >= 100) // Arduino 1.0 and 1.5 specific
 	#include "Arduino.h"
 #else
 	#include "WProgram.h"

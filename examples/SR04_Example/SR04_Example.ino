@@ -1,11 +1,7 @@
-#include <Logging.h>
 #include "SR04.h"
 
 /*!
-* This example use two SR04 ultrasonic devices and print the distance out
-* on RS232
-*
-* Use my logging library too, for easy output
+* This example uses an SR04 ultrasonic devices and prints the distance 
 *
 * This example use an Chip45 ATMega323p board. If you use an other Arduino
 * please take care to use correct pins !
@@ -15,56 +11,50 @@
 */
 
 
-#define TRIGGER_PIN_US1 7
-#define TRIGGER_PIN_US2 11
+#define TRIGGER_PIN 7
 
-#define ECHO_PIN_US1 A2
-#define ECHO_PIN_US2 A1
+#define ECHO_PIN 15
 
 Logging logger = Logging(LOGLEVEL, 38400L);
-SR04 sr04_1 = SR04(ECHO_PIN_US1, TRIGGER_PIN_US1);
-SR04 sr04_2 = SR04(ECHO_PIN_US2, TRIGGER_PIN_US2);
+SR04 sr04 = SR04(ECHO_PIN, TRIGGER_PIN);
 
-// Pin PB2
-#define LED_PIN 10
+#define LED_PIN LED1
 
 void setup() {
+    Serial.begin(57600);
+    delay(1000);
     pinMode(LED_PIN, OUTPUT);
-    logger.Init();
-    logger.Info(CR"******************************************"CR);
-    logger.Info("Ultraschall - TEST SR04"CR);
-    logger.Info("******************************************"CR);
-
+    Serial.println("******************************************");
+    Serial.println("Ultraschall - TEST SR04");
+    Serial.println("******************************************");
 }
 
 void loop() {
-	//doQuickPing();
-	//doAvgDefaultPing();
-	//doAvgMorePings(15,10);
-	doAvgMorePings(15,20);
-    delay(100);
+	doQuickPing();
+    delay(250);
+	doAvgDefaultPing();
+    delay(250);
+	doAvgMorePings(15,10);
+    delay(250);
     toggleLED(1, 50);
 }
 
 void doQuickPing() {
-   long left,right;
-	// get left distance in cm
-    left = sr04_1.Distance();
-	// get right distance in cm
-    right = sr04_2.Distance();
-    logger.Info("doQuickPing: Left/Right(%lcm/%lcm)"CR,
-                left,right);
+    long distance;
+	// get distance in cm
+    distance = sr04.Distance();
+    Serial.print("doQuickPing: ");
+    Serial.print(distance);
+    Serial.println("cm");
 }
 
 void doAvgDefaultPing() {
-   long leftAvg,rightAvg;
-	// get left average distance, use default parameter
-    leftAvg = sr04_1.DistanceAvg();
-	// get right averarge distance, use default parameter
-    rightAvg = sr04_2.DistanceAvg();
-    logger.Info(" doAvgDefaultPing: Left/Right(%lcm/%lcm)"CR,
-                leftAvg, rightAvg);
-
+    long distance;
+	// get average distance, use default parameter
+    distance = sr04.DistanceAvg();
+    Serial.print(" doAvgDefaultPing: ");
+    Serial.print(distance);
+    Serial.println("cm");
 }
 
 /*!
@@ -74,15 +64,12 @@ void doAvgDefaultPing() {
 * use 10pings
 */
 void doAvgMorePings(int wait, int pings) {
-   long leftAvg,rightAvg;
+    long distance;
 	// get left average distance
-    leftAvg = sr04_1.DistanceAvg(wait,pings);
-	// get right averarge distance
-    rightAvg = sr04_2.DistanceAvg(wait,pings);
-    logger.Info(" doAvgMorePings: delay %d, pings %d, Left/Right(%lcm/%lcm)"CR,
-				wait,pings,
-                leftAvg, rightAvg);
-
+    distance = sr04.DistanceAvg(wait,pings);
+    Serial.print(" doAvgMorePings: delay %d, pings %d, ", wait, pings);
+    Serial.print(distance);
+    Serial.println("cm");
 }
 
 /**
