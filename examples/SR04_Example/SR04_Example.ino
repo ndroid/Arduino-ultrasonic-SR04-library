@@ -15,7 +15,6 @@
 
 #define ECHO_PIN 15
 
-Logging logger = Logging(LOGLEVEL, 38400L);
 SR04 sr04 = SR04(ECHO_PIN, TRIGGER_PIN);
 
 #define LED_PIN LED1
@@ -67,7 +66,11 @@ void doAvgMorePings(int wait, int pings) {
     long distance;
 	// get left average distance
     distance = sr04.DistanceAvg(wait,pings);
-    Serial.print(" doAvgMorePings: delay %d, pings %d, ", wait, pings);
+    Serial.print(" doAvgMorePings: delay ");
+    Serial.print(wait);
+    Serial.print(", pings ");
+    Serial.print(pings);
+    Serial.print(", ");
     Serial.print(distance);
     Serial.println("cm");
 }
