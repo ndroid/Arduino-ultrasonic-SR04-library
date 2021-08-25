@@ -1,6 +1,8 @@
 
 #include "SR04.h"
 
+#define FETCH_TIMEOUT     10
+
 SR04::SR04(int echoPin, int triggerPin) {
     _echoPin = echoPin;
     _triggerPin = triggerPin;
@@ -33,12 +35,13 @@ long SR04::Distance() {
 
 long SR04::DistanceAvg(int wait, int count) {
     long min, max, avg, d;
+    int fetch;
     min = 999;
     max = 0;
     avg = d = 0;
 
-    if (wait < 25) {
-        wait = 25;
+    if (wait < 1) {
+        wait = 1;
     }
 
     if (count < 1) {
@@ -46,7 +49,13 @@ long SR04::DistanceAvg(int wait, int count) {
     }
 
     for (int x = 0; x < count + 2; x++) {
-        d = Distance();
+        fetch = 0;
+        do {
+            if ((++fetch) > FETCH_TIMEOUT) {
+                return MAX_DISTANCE;
+            }
+            d = Distance();
+        } while (d == MAX_DISTANCE);
 
         if (d < min) {
             min = d;
@@ -57,6 +66,7 @@ long SR04::DistanceAvg(int wait, int count) {
         }
 
         avg += d;
+        delay(wait);
     }
 
     // substract highest and lowest value
