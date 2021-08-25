@@ -13,6 +13,8 @@
 #include <inttypes.h>
 
 #define PULSE_TIMEOUT 150000L	// 100ms
+#define MAX_DISTANCE  999
+#define PULSE_WIDTH   12
 #define DEFAULT_DELAY 10
 #define DEFAULT_PINGS 5
 class SR04 {
@@ -31,6 +33,12 @@ public:
 	*/
 	SR04(int echoPin, int triggerPin);
 
+    /**
+    * Initialize pins for trigger and echo. Must be called before use of 
+    * distance functions.
+    */
+    void init();
+    
 	/**
 	* Do a measurment for this sensor. Return distance as long
 	* in centimenter

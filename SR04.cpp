@@ -4,25 +4,30 @@
 SR04::SR04(int echoPin, int triggerPin) {
     _echoPin = echoPin;
     _triggerPin = triggerPin;
-    pinMode(_echoPin, INPUT);
-    pinMode(_triggerPin, OUTPUT);
     _autoMode = false;
-    _distance = 999;
+    _distance = MAX_DISTANCE;
 }
 
+void SR04::init() {
+    pinMode(_echoPin, INPUT);
+    pinMode(_triggerPin, OUTPUT);
+}
 
 long SR04::Distance() {
     long d = 0;
+    int busy = digitalRead(_echoPin); // check if echo signal already high
     _duration = 0;
     digitalWrite(_triggerPin, LOW);
     delayMicroseconds(2);
     digitalWrite(_triggerPin, HIGH);
-    delayMicroseconds(10);
+    delayMicroseconds(PULSE_WIDTH);
     digitalWrite(_triggerPin, LOW);
     delayMicroseconds(2);
-    _duration = pulseIn(_echoPin, HIGH, PULSE_TIMEOUT);
+    if (busy == LOW) {
+        _duration = pulseIn(_echoPin, HIGH, PULSE_TIMEOUT);
+    }
     d = MicrosecondsToCentimeter(_duration);
-    delay(25);
+    delayMicroseconds(25000);
     return d;
 }
 
@@ -71,10 +76,6 @@ long SR04::getDistance() {
 
 long SR04::MicrosecondsToCentimeter(long duration) {
     long d = (duration * 100) / 5882;
-    //d = (d == 0)?999:d;
+    d = (d == 0)?MAX_DISTANCE:d;
     return d;
 }
-
-
-
-

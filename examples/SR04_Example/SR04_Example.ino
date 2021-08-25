@@ -3,9 +3,6 @@
 /*!
 * This example uses an SR04 ultrasonic devices and prints the distance 
 *
-* This example use an Chip45 ATMega323p board. If you use an other Arduino
-* please take care to use correct pins !
-*
 * Have fun
 * mrRobot@web.de
 */
@@ -22,6 +19,7 @@ SR04 sr04 = SR04(ECHO_PIN, TRIGGER_PIN);
 void setup() {
     Serial.begin(57600);
     delay(1000);
+    sr04.init();
     pinMode(LED_PIN, OUTPUT);
     Serial.println("******************************************");
     Serial.println("Ultraschall - TEST SR04");
