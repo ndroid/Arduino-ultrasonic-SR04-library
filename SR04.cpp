@@ -17,17 +17,15 @@ void SR04::init() {
 
 long SR04::Distance() {
     long d = 0;
-    int busy = digitalRead(_echoPin); // check if echo signal already high
     _duration = 0;
     digitalWrite(_triggerPin, LOW);
+    while (digitalRead(_echoPin) == HIGH); // check if echo signal already high
     delayMicroseconds(2);
     digitalWrite(_triggerPin, HIGH);
     delayMicroseconds(PULSE_WIDTH);
     digitalWrite(_triggerPin, LOW);
     delayMicroseconds(2);
-    if (busy == LOW) {
-        _duration = pulseIn(_echoPin, HIGH, PULSE_TIMEOUT);
-    }
+    _duration = pulseIn(_echoPin, HIGH, PULSE_TIMEOUT);
     d = MicrosecondsToCentimeter(_duration);
     delayMicroseconds(25000);
     return d;
@@ -86,6 +84,8 @@ long SR04::getDistance() {
 
 long SR04::MicrosecondsToCentimeter(long duration) {
     long d = (duration * 100) / 5882;
-    d = (d == 0)?MAX_DISTANCE:d;
+    if ((d == 0) || (d > MAX_DISTANCE)) {
+        d = MAX_DISTANCE;
+    }
     return d;
 }
