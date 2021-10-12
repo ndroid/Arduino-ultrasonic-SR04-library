@@ -4,11 +4,12 @@
 
 %wbox%[@Ultrasonic SR04 library for Arudino
 by LunaX - 2010/2011
+modified ndroid - 2021
 @]%%
 
 !CURRENT VERSION
 
-Release 1.0 24-FEB-2012 beta version.
+Release 1.1 24-AUG-2021 beta version.
 
 !HISTORY
 
@@ -19,7 +20,7 @@ Release 1.0 24-FEB-2012 Initial Release\\
 Easy to use ultrasonic library based on SR04 sensor.
 
 !HOW TO IMPORT/INSTALL
-Download here zip file here [[https://github.com/mrRobot62/Arduino-SR04-library]]
+Download here zip file here [[https://github.com/ndroid/Arduino-ultrasonic-SR04-library]]
 
 Put the Logging folder in "libraries\".
 

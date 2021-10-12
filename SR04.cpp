@@ -1,7 +1,9 @@
 
 #include "SR04.h"
 
-#define FETCH_TIMEOUT     10
+#define PULSE_TIMEOUT   150000L	// 100ms
+#define FETCH_TIMEOUT       10
+#define TRIG_PULSE_WIDTH    12
 
 SR04::SR04(int echoPin, int triggerPin) {
     _echoPin = echoPin;
@@ -19,15 +21,17 @@ long SR04::Distance() {
     long d = 0;
     _duration = 0;
     digitalWrite(_triggerPin, LOW);
-    while (digitalRead(_echoPin) == HIGH); // check if echo signal already high
+    delayMicroseconds(25000);
+    if (digitalRead(_echoPin) == HIGH) { // check if echo signal already high
+        return MAX_DISTANCE;
+    }
     delayMicroseconds(2);
     digitalWrite(_triggerPin, HIGH);
-    delayMicroseconds(PULSE_WIDTH);
+    delayMicroseconds(TRIG_PULSE_WIDTH);
     digitalWrite(_triggerPin, LOW);
     delayMicroseconds(2);
     _duration = pulseIn(_echoPin, HIGH, PULSE_TIMEOUT);
     d = MicrosecondsToCentimeter(_duration);
-    delayMicroseconds(25000);
     return d;
 }
 
