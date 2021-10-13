@@ -31,6 +31,19 @@ public:
 	*/
 	SR04(int echoPin, int triggerPin);
 
+	/**
+	* Constructor
+	* Ultrasonic sensor SR04, three connections pins
+	* VCC, ECHO/TRIGGER, GND
+	* <br>
+	* \param echoTrigPin digital INPUT/OUTPUT-Pin for measuring distance
+	*                   if 10us high pulse a trigger signal is generated from 
+	*					SR04
+	*
+	* \return void
+	*/
+	SR04(int echoTrigPin);
+
     /**
     * Initialize pins for trigger and echo. Must be called before use of 
     * distance functions.

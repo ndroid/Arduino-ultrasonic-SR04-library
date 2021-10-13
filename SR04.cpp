@@ -3,7 +3,7 @@
 
 #define PULSE_TIMEOUT   150000L	// 100ms
 #define FETCH_TIMEOUT       10
-#define TRIG_PULSE_WIDTH    12
+#define TRIG_PULSE_WIDTH    20
 
 SR04::SR04(int echoPin, int triggerPin) {
     _echoPin = echoPin;
@@ -12,14 +12,28 @@ SR04::SR04(int echoPin, int triggerPin) {
     _distance = MAX_DISTANCE;
 }
 
+SR04::SR04(int echoTrigPin) {
+    _echoPin = echoTrigPin;
+    _triggerPin = echoTrigPin;
+    _autoMode = true;
+    _distance = MAX_DISTANCE;
+}
+
 void SR04::init() {
-    pinMode(_echoPin, INPUT);
-    pinMode(_triggerPin, OUTPUT);
+    if (_autoMode) {
+        pinMode(_echoPin, INPUT);
+    } else {
+        pinMode(_echoPin, INPUT);
+        pinMode(_triggerPin, OUTPUT);
+    }
 }
 
 long SR04::Distance() {
     long d = 0;
     _duration = 0;
+    if (_autoMode) {
+        pinMode(_triggerPin, OUTPUT);
+    }
     digitalWrite(_triggerPin, LOW);
     delayMicroseconds(25000);
     if (digitalRead(_echoPin) == HIGH) { // check if echo signal already high
@@ -30,6 +44,9 @@ long SR04::Distance() {
     delayMicroseconds(TRIG_PULSE_WIDTH);
     digitalWrite(_triggerPin, LOW);
     delayMicroseconds(2);
+    if (_autoMode) {
+        pinMode(_echoPin, INPUT);
+    }
     _duration = pulseIn(_echoPin, HIGH, PULSE_TIMEOUT);
     d = MicrosecondsToCentimeter(_duration);
     return d;
