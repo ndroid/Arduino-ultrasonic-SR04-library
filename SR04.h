@@ -12,9 +12,10 @@
 
 #include <inttypes.h>
 
-#define MAX_DISTANCE  999
-#define DEFAULT_DELAY 10
-#define DEFAULT_PINGS 5
+#define PULSE_TIMEOUT   30000UL	// 30ms ~ 500cm
+#define MAX_DISTANCE    999
+#define DEFAULT_DELAY   10
+#define DEFAULT_PINGS   5
 class SR04 {
 public:
 	
@@ -95,7 +96,7 @@ private:
 	* <br>
 	* 1sec = 1000ms = 1.000.000uS
 	* 1.000.000 / 340 = Distance in microseconds for 100cm
-	* 2941uS fuer 100cm = 5882 uS fuer 200cm
+	* 2941uS for 100cm = 5882 uS for 200cm
 	*
 	* duration / 5882 * 100 = distance in cm
 	*/	

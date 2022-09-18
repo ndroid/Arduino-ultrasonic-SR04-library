@@ -1,9 +1,17 @@
-
+/**
+ * SR04.cpp
+ * Arduino\Energia library for SR04 ultrasonic distance sensor.
+ * Forked from mrRobot62/Arduino-ultrasonic-SR04-library
+ * 
+ * modified-by: miller
+ * last-modified: 9/18/2022
+ */
 #include "SR04.h"
 
-#define PULSE_TIMEOUT   150000L	// 100ms
-#define FETCH_TIMEOUT       10
-#define TRIG_PULSE_WIDTH    20
+#define FETCH_TIMEOUT       5       // re-attempts allowed when averaging
+#define TRIG_PULSE_WIDTH    20      // 20 us
+#define SETTLE_TIME         4       // 4 us
+#define FAILURE_DELAY       10000   // 10 ms
 
 SR04::SR04(int echoPin, int triggerPin) {
     _echoPin = echoPin;
@@ -35,15 +43,17 @@ long SR04::Distance() {
         pinMode(_triggerPin, OUTPUT);
     }
     digitalWrite(_triggerPin, LOW);
-    delayMicroseconds(25000);
-    if (digitalRead(_echoPin) == HIGH) { // check if echo signal already high
+    delayMicroseconds(SETTLE_TIME);
+    // check if echo signal already high
+    if (digitalRead(_echoPin) == HIGH) { 
+        // reduce frequency of failed attempts (for looping operations)
+        delayMicroseconds(FAILURE_DELAY);
         return MAX_DISTANCE;
     }
-    delayMicroseconds(2);
     digitalWrite(_triggerPin, HIGH);
     delayMicroseconds(TRIG_PULSE_WIDTH);
     digitalWrite(_triggerPin, LOW);
-    delayMicroseconds(2);
+    delayMicroseconds(SETTLE_TIME);
     if (_autoMode) {
         pinMode(_echoPin, INPUT);
     }
@@ -69,12 +79,14 @@ long SR04::DistanceAvg(int wait, int count) {
 
     for (int x = 0; x < count + 2; x++) {
         fetch = 0;
-        do {
+        d = Distance();
+        while (d == MAX_DISTANCE) {
             if ((++fetch) > FETCH_TIMEOUT) {
                 return MAX_DISTANCE;
             }
+            delayMicroseconds(FAILURE_DELAY);
             d = Distance();
-        } while (d == MAX_DISTANCE);
+        } 
 
         if (d < min) {
             min = d;
